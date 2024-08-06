@@ -1,3 +1,4 @@
 torch
 pyspark
 pytest
+pylint
