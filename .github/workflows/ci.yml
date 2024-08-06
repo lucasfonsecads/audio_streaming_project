@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 jobs:
   build:
@@ -20,3 +24,41 @@ jobs:
       run: |
         source venv/bin/activate
         pytest tests/
+    - name: Set up Git for tagging
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+    - name: Create a new Git tag and push
+      id: create_tag
+      run: |
+        # Create a new tag based on the current timestamp
+        VERSION=$(date +'%Y%m%d%H%M%S')
+        echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        git tag "v${VERSION}"
+        git push origin "v${VERSION}"
+    - name: Create GitHub Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./path/to/your/artifact # Specify the path to any files to attach to the release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Add Release Comment
+      run: |
+        # Determine the type of change based on the commit messages or PR title
+        PR_TYPE=$(jq -r '.pull_request.title' $GITHUB_EVENT_PATH | grep -oE '^(feat|fix)')
+        if [ "$PR_TYPE" == "feat" ]; then
+          COMMENT="🚀 New feature release!"
+        elif [ "$PR_TYPE" == "fix" ]; then
+          COMMENT="🐛 Bug fix release."
+        else
+          COMMENT="🔄 Minor updates."
+        fi
+        
+        # Update the release with the comment
+        curl -X PATCH \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -d "{\"body\": \"${COMMENT}\"}" \
+          https://api.github.com/repos/${{ github.repository }}/releases/${{ steps.create_release.outputs.id }}
