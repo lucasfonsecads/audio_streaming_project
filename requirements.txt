@@ -2,3 +2,4 @@ torch
 pyspark
 pytest
 pylint
+numpy
