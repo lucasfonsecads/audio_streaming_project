@@ -1,7 +1,14 @@
+"""
+Module to train the audio model using PyTorch.
+"""
+
 import torch
 from src.model import AudioModel
 
 def train():
+    """
+    Train the AudioModel with dummy data.
+    """
     model = AudioModel()
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
