@@ -3,12 +3,6 @@ VENV_DIR = venv
 PYTHON = $(VENV_DIR)/bin/python
 PIP = $(VENV_DIR)/bin/pip
 
-# List of Python files for servers and client
-SERVER1 = server1/server1.py
-SERVER2 = server2/server2.py
-LOAD_BALANCER = load_balancer/load_balancer.py
-CLIENT = client/client.py
-
 # Default target: create virtual environment and install dependencies
 all: install
 
@@ -29,7 +23,7 @@ lint:
 	@pylint src/
 
 run:
-	@python src/train.py
+	PYTHON=src src/train.py
 
 docker-build:
 	@docker build -t audio_streaming_project .
