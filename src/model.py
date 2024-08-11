@@ -2,7 +2,7 @@
 Module defining the audio model using PyTorch.
 """
 
-from torch import nn
+from torch import nn # type: ignore
 
 class AudioModel(nn.Module):
     """

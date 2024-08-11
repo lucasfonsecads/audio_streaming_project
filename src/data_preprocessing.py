@@ -2,7 +2,7 @@
 Module for data preprocessing using PySpark.
 """
 
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession # type: ignore
 
 def preprocess_data(file_path):
     """
@@ -15,6 +15,4 @@ def preprocess_data(file_path):
         DataFrame: Preprocessed data as a PySpark DataFrame.
     """
     spark = SparkSession.builder.appName('AudioPreprocessing').getOrCreate()
-    df = spark.read.csv(file_path, header=True)
-    # Add preprocessing steps
-    return df
+    return spark.read.csv(file_path, header=True)
